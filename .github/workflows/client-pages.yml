@@ -31,14 +31,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: |
-            admin-side/package-lock.json
-            client-side/package-lock.json
 
       - name: Install admin dependencies
         working-directory: admin-side
-        run: npm ci
+        run: npm install
 
       - name: Build admin frontend
         working-directory: admin-side
@@ -46,7 +42,7 @@ jobs:
 
       - name: Install client dependencies
         working-directory: client-side
-        run: npm ci
+        run: npm install
 
       - name: Build client frontend
         working-directory: client-side
