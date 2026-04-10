@@ -7,7 +7,7 @@
 - Client App: https://dharmapatel-jsn.github.io/shopverse/client/
 - Admin App: https://dharmapatel-jsn.github.io/shopverse/admin/
 
-## Features
+## Frontend Features
 
 - Browse products by category like clothing, electronics, bags, and footwear.
 - View product cards with image, name, and price.
