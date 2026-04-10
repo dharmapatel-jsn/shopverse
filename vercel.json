@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "npm ci --omit=dev --prefix backend && npm ci --prefix client-side && npm ci --prefix admin-side",
+  "installCommand": "npm ci --omit=dev --prefix backend && npm ci --include=dev --prefix client-side && npm ci --include=dev --prefix admin-side",
   "buildCommand": "npm run build",
   "routes": [
     {
