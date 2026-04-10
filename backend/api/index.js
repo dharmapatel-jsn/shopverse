@@ -3,7 +3,7 @@ const { connectDB } = require("../src/config/db");
 
 let dbConnectionPromise;
 
-process.env.STATIC_FRONTEND_DIR = __dirname;
+process.env.STATIC_FRONTEND_DIR = require("path").join(__dirname, "..", "public");
 
 module.exports = async (req, res) => {
   try {
