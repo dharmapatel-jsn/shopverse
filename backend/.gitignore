@@ -1,10 +1,6 @@
 # Dependencies
 node_modules/
 
-# Generated frontend build artifacts
-client/
-admin/
-
 # Environment
 .env
 .env.*
