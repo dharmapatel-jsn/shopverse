@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "installCommand": "npm ci --omit=dev --prefix backend && npm ci --prefix client-side && npm ci --prefix admin-side",
+  "buildCommand": "npm run build",
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/api(?:/(.*))?$",
+      "dest": "/backend/api/index.js"
+    },
+    {
+      "src": "^/client(?:/.*)?$",
+      "dest": "/backend/client/index.html"
+    },
+    {
+      "src": "^/admin(?:/.*)?$",
+      "dest": "/backend/admin/index.html"
+    },
+    {
+      "src": "^/$",
+      "dest": "/backend/client/index.html"
+    }
+  ]
+}
