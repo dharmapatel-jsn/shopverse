@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
+    "build": "node scripts/buildFrontends.js",
     "start": "node src/server.js",
     "seed": "node scripts/seed.js",
     "migrate:passwords": "node scripts/hashExistingPasswords.js",

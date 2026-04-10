@@ -1,0 +1,15 @@
+ShopVerse - Online E-Commerce Website
+
+Project Links
+
+- Repository: https://github.com/dharmapatel-jsn/shopverse
+- GitHub Pages: https://dharmapatel-jsn.github.io/shopverse/
+- Client App: https://dharmapatel-jsn.github.io/shopverse/client/
+- Admin App: https://dharmapatel-jsn.github.io/shopverse/admin/
+
+Vercel Deployment Links
+
+- Backend API: https://your-backend-project.vercel.app
+- Frontend (single link): https://your-frontend-project.vercel.app
+- Client App: https://your-frontend-project.vercel.app/client/
+- Admin App: https://your-frontend-project.vercel.app/admin/
