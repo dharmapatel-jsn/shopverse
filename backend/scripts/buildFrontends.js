@@ -4,8 +4,6 @@ const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const backendRoot = path.resolve(__dirname, "..");
-const npmExecPath = process.env.npm_execpath;
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const apps = [
   {
@@ -22,32 +20,26 @@ const apps = [
   },
 ];
 
-function runNpm(args, options) {
-  const attempts = [];
+function runViteBuild(app) {
+  const viteBin = path.join(app.sourceDir, "node_modules", "vite", "bin", "vite.js");
 
-  if (npmExecPath) {
-    attempts.push({ command: process.execPath, commandArgs: [npmExecPath, ...args] });
+  if (!fs.existsSync(viteBin)) {
+    throw new Error(`Missing Vite binary for ${app.name}. Ensure dependencies are installed before build.`);
   }
 
-  attempts.push({ command: npmCommand, commandArgs: args });
+  const result = spawnSync(process.execPath, [viteBin, "build"], {
+    cwd: app.sourceDir,
+    stdio: "inherit",
+    shell: false,
+    env: {
+      ...process.env,
+      VITE_BASE_PATH: app.basePath,
+    },
+  });
 
-  let lastError = null;
-
-  for (const attempt of attempts) {
-    const result = spawnSync(attempt.command, attempt.commandArgs, {
-      stdio: "inherit",
-      shell: false,
-      ...options,
-    });
-
-    if (!result.error && result.status === 0) {
-      return;
-    }
-
-    lastError = result.error || new Error(`exit code ${result.status}`);
+  if (result.status !== 0) {
+    throw new Error(`${app.name} build failed with exit code ${result.status}`);
   }
-
-  throw new Error(`npm ${args.join(" ")} failed: ${lastError ? lastError.message : "unknown error"}`);
 }
 
 for (const app of apps) {
@@ -55,17 +47,7 @@ for (const app of apps) {
     fs.rmSync(app.outputDir, { recursive: true, force: true });
   }
 
-  runNpm(["ci"], {
-    cwd: app.sourceDir,
-  });
-
-  runNpm(["run", "build"], {
-    cwd: app.sourceDir,
-    env: {
-      ...process.env,
-      VITE_BASE_PATH: app.basePath,
-    },
-  });
+  runViteBuild(app);
 
   fs.cpSync(path.join(app.sourceDir, "dist"), app.outputDir, {
     recursive: true,
