@@ -4,23 +4,16 @@
   "buildCommand": "npm run build",
   "routes": [
     {
-      "handle": "filesystem"
-    },
-    {
       "src": "^/api(?:/(.*))?$",
       "dest": "/backend/api/index.js"
     },
     {
-      "src": "^/client(?:/.*)?$",
-      "dest": "/backend/client/index.html"
-    },
-    {
-      "src": "^/admin(?:/.*)?$",
-      "dest": "/backend/admin/index.html"
+      "src": "^/(?:client|admin)(?:/.*)?$",
+      "dest": "/backend/api/index.js"
     },
     {
       "src": "^/$",
-      "dest": "/backend/client/index.html"
+      "dest": "/backend/api/index.js"
     }
   ]
 }

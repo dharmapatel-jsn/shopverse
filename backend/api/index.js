@@ -5,11 +5,21 @@ let dbConnectionPromise;
 
 module.exports = async (req, res) => {
   try {
-    if (!dbConnectionPromise) {
-      dbConnectionPromise = connectDB();
+    if (req.url === "/api/health") {
+      return res.status(200).json({
+        success: true,
+        message: "Backend is running",
+      });
     }
 
-    await dbConnectionPromise;
+    if (req.url.startsWith("/api")) {
+      if (!dbConnectionPromise) {
+        dbConnectionPromise = connectDB();
+      }
+
+      await dbConnectionPromise;
+    }
+
     return app(req, res);
   } catch (error) {
     return res.status(500).json({
