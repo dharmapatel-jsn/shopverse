@@ -11,7 +11,7 @@ const apps = [
     sourceDir: path.join(repoRoot, "client-side"),
     outputDirs: [
       path.join(backendRoot, "client"),
-      path.join(backendRoot, "api", "client"),
+      path.join(repoRoot, "client"),
     ],
     basePath: "/client/",
   },
@@ -20,7 +20,7 @@ const apps = [
     sourceDir: path.join(repoRoot, "admin-side"),
     outputDirs: [
       path.join(backendRoot, "admin"),
-      path.join(backendRoot, "api", "admin"),
+      path.join(repoRoot, "admin"),
     ],
     basePath: "/admin/",
   },
