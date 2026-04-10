@@ -5,6 +5,7 @@ const path = require("path");
 const repoRoot = path.resolve(__dirname, "..", "..");
 const backendRoot = path.resolve(__dirname, "..");
 const npmExecPath = process.env.npm_execpath;
+const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const apps = [
   {
@@ -22,19 +23,31 @@ const apps = [
 ];
 
 function runNpm(args, options) {
-  if (!npmExecPath) {
-    throw new Error("npm_execpath is not defined; cannot run npm subprocesses");
+  const attempts = [];
+
+  if (npmExecPath) {
+    attempts.push({ command: process.execPath, commandArgs: [npmExecPath, ...args] });
   }
 
-  const result = spawnSync(process.execPath, [npmExecPath, ...args], {
-    stdio: "inherit",
-    shell: false,
-    ...options,
-  });
+  attempts.push({ command: npmCommand, commandArgs: args });
 
-  if (result.status !== 0) {
-    throw new Error(`npm ${args.join(" ")} failed with exit code ${result.status}`);
+  let lastError = null;
+
+  for (const attempt of attempts) {
+    const result = spawnSync(attempt.command, attempt.commandArgs, {
+      stdio: "inherit",
+      shell: false,
+      ...options,
+    });
+
+    if (!result.error && result.status === 0) {
+      return;
+    }
+
+    lastError = result.error || new Error(`exit code ${result.status}`);
   }
+
+  throw new Error(`npm ${args.join(" ")} failed: ${lastError ? lastError.message : "unknown error"}`);
 }
 
 for (const app of apps) {
