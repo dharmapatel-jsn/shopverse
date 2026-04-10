@@ -40,6 +40,24 @@ const Login = () => {
       return;
     }
 
+    const fallbackUser = DEMO_USERS.find(
+      (user) => user.email.toLowerCase() === form.email.trim().toLowerCase() && user.password === form.password
+    );
+
+    if (fallbackUser) {
+      localStorage.setItem('shopverse_user_token', 'demo-token');
+      localStorage.setItem(
+        'shopverse_user',
+        JSON.stringify({
+          userId: 'demo-user',
+          email: fallbackUser.email,
+          name: fallbackUser.name,
+        })
+      );
+      navigate('/');
+      return;
+    }
+
     try {
       setSubmitError('');
       setLoading(true);
@@ -56,27 +74,11 @@ const Login = () => {
       setLoading(false);
       navigate('/');
     } catch (err) {
-      const fallbackUser = DEMO_USERS.find(
-        (user) => user.email.toLowerCase() === form.email.trim().toLowerCase() && user.password === form.password
-      );
-
-      if (fallbackUser) {
-        localStorage.setItem('shopverse_user_token', 'demo-token');
-        localStorage.setItem(
-          'shopverse_user',
-          JSON.stringify({
-            userId: 'demo-user',
-            email: fallbackUser.email,
-            name: fallbackUser.name,
-          })
-        );
-        setLoading(false);
-        navigate('/');
-        return;
-      }
-
       setLoading(false);
-      setSubmitError(err.message || 'Login failed');
+      const message = (err.message || '').toLowerCase().includes('failed to fetch')
+        ? 'Backend is unreachable. Use demo credentials: dharma@gmail.com / password123'
+        : (err.message || 'Login failed');
+      setSubmitError(message);
     }
   };
 
