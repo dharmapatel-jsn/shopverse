@@ -4,6 +4,7 @@ import { apiRequest } from '../services/http';
 import './Auth.css';
 
 const DEMO_USERS = [
+  { email: 'dharma@gmail.com', password: 'password123', name: 'Dharma Patel' },
   { email: 'john@example.com', password: 'password123', name: 'Aarav Patel' },
   { email: 'jane@example.com', password: 'password123', name: 'Nirali Shah' },
   { email: 'bob@example.com', password: 'password123', name: 'Harsh Mehta' },
@@ -11,7 +12,7 @@ const DEMO_USERS = [
 
 const Login = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: 'dharma@gmail.com', password: 'password123' });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -130,7 +131,7 @@ const Login = () => {
           Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
         </p>
         <p className="auth-switch" style={{ marginTop: '8px', fontSize: '12px', opacity: 0.8 }}>
-          Demo: john@example.com / password123
+          Demo: dharma@gmail.com / password123
         </p>
       </div>
     </div>
