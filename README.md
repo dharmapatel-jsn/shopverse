@@ -1,4 +1,4 @@
-# ShopVerse
+# ShopVerse - Online E-Commerce Website
 
 ## Project Links
 
