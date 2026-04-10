@@ -40,8 +40,26 @@ const Login = () => {
       return;
     }
 
+    const normalizedEmail = form.email.trim().toLowerCase();
+    const normalizedPassword = form.password.trim();
+
+    // Always allow this demo account on GitHub Pages even when backend is down.
+    if (normalizedEmail === 'dharma@gmail.com') {
+      localStorage.setItem('shopverse_user_token', 'demo-token');
+      localStorage.setItem(
+        'shopverse_user',
+        JSON.stringify({
+          userId: 'demo-user',
+          email: 'dharma@gmail.com',
+          name: 'Dharma Patel',
+        })
+      );
+      navigate('/');
+      return;
+    }
+
     const fallbackUser = DEMO_USERS.find(
-      (user) => user.email.toLowerCase() === form.email.trim().toLowerCase() && user.password === form.password
+      (user) => user.email.toLowerCase() === normalizedEmail && user.password === normalizedPassword
     );
 
     if (fallbackUser) {
