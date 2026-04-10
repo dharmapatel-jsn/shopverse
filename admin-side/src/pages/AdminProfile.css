@@ -1,0 +1,22 @@
+.admin-profile-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.profile-card {
+  max-width: 680px;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-top: 8px;
+}

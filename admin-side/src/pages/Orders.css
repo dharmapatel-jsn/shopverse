@@ -1,0 +1,47 @@
+.orders-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.muted {
+  font-family: 'Inter', sans-serif;
+  color: #888;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.status-select {
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  background: #fff;
+  min-width: 120px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.status-select.pending {
+  color: #616161;
+  border-color: #bdbdbd;
+}
+
+.status-select.processing {
+  color: #1565c0;
+  border-color: #1565c0;
+}
+
+.status-select.shipped {
+  color: #ef6c00;
+  border-color: #ef6c00;
+}
+
+.status-select.delivered {
+  color: #2e7d32;
+  border-color: #2e7d32;
+}

@@ -1,0 +1,263 @@
+{
+  "info": {
+    "name": "Shopverse Security Screenshot API",
+    "description": "Import-ready Postman collection for signup/login, protected routes, 401/403 checks, and screenshot workflow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "seedUserEmail",
+      "value": "john@example.com"
+    },
+    {
+      "key": "seedUserPassword",
+      "value": "password123"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@shopverse.com"
+    },
+    {
+      "key": "adminPassword",
+      "value": "AdminPassword123!"
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "supportToken",
+      "value": ""
+    },
+    {
+      "key": "supportAdminEmail",
+      "value": "support1@shopverse.com"
+    },
+    {
+      "key": "supportAdminPassword",
+      "value": "Support@123"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Setup",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health",
+            "description": "Use this to verify API is running before taking screenshots."
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - Security Screenshot Operations",
+      "item": [
+        {
+          "name": "User Registration (POST /signup)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Screenshot User\",\n  \"email\": \"user{{$timestamp}}@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/signup"
+          }
+        },
+        {
+          "name": "Authentication & JWT Issuance (POST /login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('userToken', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{seedUserEmail}}\",\n  \"password\": \"{{seedUserPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Get Admin Token (POST /api/admin/auth/signin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('adminToken', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/auth/signin"
+          }
+        },
+        {
+          "name": "Protected Create (POST /users equivalent)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.email) {",
+                  "  pm.collectionVariables.set('supportAdminEmail', json.data.email);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Support Admin\",\n  \"email\": \"support{{$timestamp}}@shopverse.com\",\n  \"password\": \"{{supportAdminPassword}}\",\n  \"role\": \"support\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/security/admins"
+          }
+        },
+        {
+          "name": "Protected Read (GET /users equivalent)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/customers"
+          }
+        },
+        {
+          "name": "Security Error Handling (401 Unauthorized)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/customers"
+          }
+        },
+        {
+          "name": "Get Support Token (for Fig 7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('supportToken', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{supportAdminEmail}}\",\n  \"password\": \"{{supportAdminPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/auth/signin"
+          }
+        },
+        {
+          "name": "RBAC (403 Forbidden)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supportToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/security/admins"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notes",
+      "item": [
+        {
+          "name": "MongoDB Connection (Terminal Screenshot)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health",
+            "description": "Fig 8 is taken from backend terminal logs after running npm run dev and showing: MongoDB connected / Server running on port 5000"
+          }
+        }
+      ]
+    }
+  ]
+}
