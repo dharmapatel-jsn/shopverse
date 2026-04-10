@@ -4,8 +4,8 @@
 
 - Repository: https://github.com/dharmapatel-jsn/shopverse
 - GitHub Pages: https://dharmapatel-jsn.github.io/shopverse/
-- Client App: https://dharmapatel-jsn.github.io/shopverse/client/
-- Admin App: https://dharmapatel-jsn.github.io/shopverse/admin/
+- Deployed Client App: https://shopverse-five-psi.vercel.app/
+- Deployed Admin App: https://shopverse-five-psi.vercel.app/admin
 
 ## Frontend Features
 
