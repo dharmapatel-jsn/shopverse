@@ -6,7 +6,7 @@ on:
     paths:
       - 'admin-side/**'
       - 'client-side/**'
-      - 'pages/index.html'
+      - 'index.html'
       - '.github/workflows/client-pages.yml'
   workflow_dispatch:
 
@@ -53,8 +53,8 @@ jobs:
       - name: Assemble Pages bundle
         run: |
           mkdir -p public/admin public/client
-          cp pages/index.html public/index.html
-          cp pages/index.html public/404.html
+          cp index.html public/index.html
+          cp index.html public/404.html
           cp -r admin-side/dist/* public/admin/
           cp -r client-side/dist/* public/client/
           touch public/.nojekyll
