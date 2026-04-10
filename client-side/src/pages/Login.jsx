@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiRequest } from '../services/http';
 import './Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -23,18 +25,33 @@ const Login = () => {
     if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
+
+    try {
+      setSubmitError('');
+      setLoading(true);
+      const response = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      localStorage.setItem('shopverse_user_token', response?.data?.token || '');
+      localStorage.setItem('shopverse_user', JSON.stringify(response?.data?.user || {}));
       setLoading(false);
       navigate('/');
-    }, 900);
+    } catch (err) {
+      setLoading(false);
+      setSubmitError(err.message || 'Login failed');
+    }
   };
 
   return (
@@ -81,6 +98,7 @@ const Login = () => {
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
+          {submitError && <span className="error-msg">{submitError}</span>}
         </form>
 
         <p className="auth-switch">

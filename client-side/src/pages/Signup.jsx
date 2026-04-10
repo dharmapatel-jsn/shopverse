@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiRequest } from '../services/http';
 import './Auth.css';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -23,18 +25,32 @@ const Signup = () => {
     if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
+
+    try {
+      setSubmitError('');
+      setLoading(true);
+      await apiRequest('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
       setLoading(false);
       navigate('/login');
-    }, 900);
+    } catch (err) {
+      setLoading(false);
+      setSubmitError(err.message || 'Signup failed');
+    }
   };
 
   return (
@@ -93,6 +109,7 @@ const Signup = () => {
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? 'Signing up…' : 'Sign Up'}
           </button>
+          {submitError && <span className="error-msg">{submitError}</span>}
         </form>
 
         <p className="auth-switch">
