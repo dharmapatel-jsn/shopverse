@@ -3,6 +3,8 @@ const { connectDB } = require("../src/config/db");
 
 let dbConnectionPromise;
 
+process.env.STATIC_FRONTEND_DIR = __dirname;
+
 module.exports = async (req, res) => {
   try {
     if (req.url === "/api/health") {

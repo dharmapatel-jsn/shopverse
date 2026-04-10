@@ -9,13 +9,19 @@ const apps = [
   {
     name: "client-side",
     sourceDir: path.join(repoRoot, "client-side"),
-    outputDir: path.join(backendRoot, "client"),
+    outputDirs: [
+      path.join(backendRoot, "client"),
+      path.join(backendRoot, "api", "client"),
+    ],
     basePath: "/client/",
   },
   {
     name: "admin-side",
     sourceDir: path.join(repoRoot, "admin-side"),
-    outputDir: path.join(backendRoot, "admin"),
+    outputDirs: [
+      path.join(backendRoot, "admin"),
+      path.join(backendRoot, "api", "admin"),
+    ],
     basePath: "/admin/",
   },
 ];
@@ -43,17 +49,21 @@ function runViteBuild(app) {
 }
 
 for (const app of apps) {
-  if (fs.existsSync(app.outputDir)) {
-    fs.rmSync(app.outputDir, { recursive: true, force: true });
+  for (const outputDir of app.outputDirs) {
+    if (fs.existsSync(outputDir)) {
+      fs.rmSync(outputDir, { recursive: true, force: true });
+    }
   }
 
   runViteBuild(app);
 
-  fs.cpSync(path.join(app.sourceDir, "dist"), app.outputDir, {
-    recursive: true,
-  });
+  for (const outputDir of app.outputDirs) {
+    fs.cpSync(path.join(app.sourceDir, "dist"), outputDir, {
+      recursive: true,
+    });
 
-  // Ensure non-root SPA entry points route correctly on Vercel.
-  const notFoundPath = path.join(app.outputDir, "404.html");
-  fs.copyFileSync(path.join(app.outputDir, "index.html"), notFoundPath);
+    // Ensure non-root SPA entry points route correctly on Vercel.
+    const notFoundPath = path.join(outputDir, "404.html");
+    fs.copyFileSync(path.join(outputDir, "index.html"), notFoundPath);
+  }
 }

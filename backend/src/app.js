@@ -7,6 +7,11 @@ const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
+const frontendBaseDir = process.env.STATIC_FRONTEND_DIR
+	? path.resolve(process.env.STATIC_FRONTEND_DIR)
+	: path.join(__dirname, "..");
+const clientDir = path.join(frontendBaseDir, "client");
+const adminDir = path.join(frontendBaseDir, "admin");
 
 const allowedOrigins = (process.env.CORS_ORIGIN || "")
 	.split(",")
@@ -24,19 +29,19 @@ app.use(morgan("dev"));
 
 app.use("/api", routes);
 
-app.use("/client", express.static(path.join(__dirname, "../client"), { index: false }));
-app.use("/admin", express.static(path.join(__dirname, "../admin"), { index: false }));
+app.use("/client", express.static(clientDir, { index: false }));
+app.use("/admin", express.static(adminDir, { index: false }));
 
 app.get(/^\/client(?:\/.*)?$/, (req, res) => {
-	res.sendFile(path.join(__dirname, "../client/index.html"));
+	res.sendFile(path.join(clientDir, "index.html"));
 });
 
 app.get(/^\/admin(?:\/.*)?$/, (req, res) => {
-	res.sendFile(path.join(__dirname, "../admin/index.html"));
+	res.sendFile(path.join(adminDir, "index.html"));
 });
 
 app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "../client/index.html"));
+	res.sendFile(path.join(clientDir, "index.html"));
 });
 
 app.use(notFound);
