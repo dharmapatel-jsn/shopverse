@@ -1,9 +1,10 @@
-const { execSync } = require("child_process");
+const { spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const backendRoot = path.resolve(__dirname, "..");
+const npmExecPath = process.env.npm_execpath;
 
 const apps = [
   {
@@ -20,19 +21,33 @@ const apps = [
   },
 ];
 
+function runNpm(args, options) {
+  if (!npmExecPath) {
+    throw new Error("npm_execpath is not defined; cannot run npm subprocesses");
+  }
+
+  const result = spawnSync(process.execPath, [npmExecPath, ...args], {
+    stdio: "inherit",
+    shell: false,
+    ...options,
+  });
+
+  if (result.status !== 0) {
+    throw new Error(`npm ${args.join(" ")} failed with exit code ${result.status}`);
+  }
+}
+
 for (const app of apps) {
   if (fs.existsSync(app.outputDir)) {
     fs.rmSync(app.outputDir, { recursive: true, force: true });
   }
 
-  execSync("npm ci", {
+  runNpm(["ci"], {
     cwd: app.sourceDir,
-    stdio: "inherit",
   });
 
-  execSync("npm run build", {
+  runNpm(["run", "build"], {
     cwd: app.sourceDir,
-    stdio: "inherit",
     env: {
       ...process.env,
       VITE_BASE_PATH: app.basePath,
