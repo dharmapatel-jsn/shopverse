@@ -82,6 +82,12 @@
   font-weight: 500;
 }
 
+.success-msg {
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
 .btn-auth {
   padding: 13px;
   background: #ffc107;

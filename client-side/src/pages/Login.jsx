@@ -15,6 +15,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: 'dharma@gmail.com', password: 'password123' });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -30,6 +31,14 @@ const Login = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
+    if (submitError) setSubmitError('');
+    if (submitSuccess) setSubmitSuccess('');
+  };
+
+  const handleLoginSuccess = () => {
+    setSubmitError('');
+    setSubmitSuccess('Login successful. Redirecting...');
+    setTimeout(() => navigate('/'), 700);
   };
 
   const handleSubmit = async (e) => {
@@ -54,7 +63,7 @@ const Login = () => {
           name: 'Dharma Patel',
         })
       );
-      navigate('/');
+      handleLoginSuccess();
       return;
     }
 
@@ -72,12 +81,13 @@ const Login = () => {
           name: fallbackUser.name,
         })
       );
-      navigate('/');
+      handleLoginSuccess();
       return;
     }
 
     try {
       setSubmitError('');
+      setSubmitSuccess('');
       setLoading(true);
       const response = await apiRequest('/auth/login', {
         method: 'POST',
@@ -90,9 +100,10 @@ const Login = () => {
       localStorage.setItem('shopverse_user_token', response?.data?.token || '');
       localStorage.setItem('shopverse_user', JSON.stringify(response?.data?.user || {}));
       setLoading(false);
-      navigate('/');
+      handleLoginSuccess();
     } catch (err) {
       setLoading(false);
+      setSubmitSuccess('');
       const message = (err.message || '').toLowerCase().includes('failed to fetch')
         ? 'Backend is unreachable. Use demo credentials: dharma@gmail.com / password123'
         : (err.message || 'Login failed');
@@ -144,6 +155,7 @@ const Login = () => {
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
+          {submitSuccess && <span className="success-msg">{submitSuccess}</span>}
           {submitError && <span className="error-msg">{submitError}</span>}
         </form>
 

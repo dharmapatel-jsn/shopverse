@@ -66,6 +66,12 @@
   font-size: 13px;
 }
 
+.admin-auth-success {
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .admin-auth-hint {
   color: #666;
   font-size: 12px;

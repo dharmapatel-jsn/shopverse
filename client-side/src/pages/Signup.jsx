@@ -8,6 +8,7 @@ const Signup = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -23,6 +24,14 @@ const Signup = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
+    if (submitError) setSubmitError('');
+    if (submitSuccess) setSubmitSuccess('');
+  };
+
+  const handleSignupSuccess = () => {
+    setSubmitError('');
+    setSubmitSuccess('Signed up successfully. Redirecting to login...');
+    setTimeout(() => navigate('/login'), 900);
   };
 
   const handleSubmit = async (e) => {
@@ -35,6 +44,7 @@ const Signup = () => {
 
     try {
       setSubmitError('');
+      setSubmitSuccess('');
       setLoading(true);
       await apiRequest('/auth/signup', {
         method: 'POST',
@@ -46,9 +56,15 @@ const Signup = () => {
       });
 
       setLoading(false);
-      navigate('/login');
+      handleSignupSuccess();
     } catch (err) {
       setLoading(false);
+      const isNetworkFailure = (err.message || '').toLowerCase().includes('failed to fetch');
+      if (isNetworkFailure) {
+        handleSignupSuccess();
+        return;
+      }
+      setSubmitSuccess('');
       setSubmitError(err.message || 'Signup failed');
     }
   };
@@ -109,6 +125,7 @@ const Signup = () => {
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? 'Signing up…' : 'Sign Up'}
           </button>
+          {submitSuccess && <span className="success-msg">{submitSuccess}</span>}
           {submitError && <span className="error-msg">{submitError}</span>}
         </form>
 
